@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@AvailableObject
 @Data
 @Entity
 @Table(name = "USER")
