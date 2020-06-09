@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql.Data;
+package com.graphqllike.gruphql.data;
 
 import lombok.Data;
 

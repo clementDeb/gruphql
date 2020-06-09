@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql.Data;
+package com.graphqllike.gruphql.data;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
