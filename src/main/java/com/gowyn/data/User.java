@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql.data;
+package com.gowyn.data;
 
 import lombok.Data;
 

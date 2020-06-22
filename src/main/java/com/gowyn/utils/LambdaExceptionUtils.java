@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql.utils;
+package com.gowyn.utils;
 
 import lombok.extern.slf4j.Slf4j;
 

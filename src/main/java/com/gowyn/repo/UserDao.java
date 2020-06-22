@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql.repo;
+package com.gowyn.repo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

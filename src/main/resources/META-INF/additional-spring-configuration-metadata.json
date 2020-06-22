@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "annotated.object.package.name",
+      "type": "java.lang.String",
+      "description": "Description for annotated.object.package.name."
+    },
+    {
+      "name": "annotated.object.package.name",
+      "type": "java.lang.String",
+      "description": "Description for annotated.object.package.name."
+    }
+  ] }

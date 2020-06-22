@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql;
+package com.gowyn;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

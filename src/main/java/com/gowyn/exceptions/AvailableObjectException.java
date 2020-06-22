@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql.exceptions;
+package com.gowyn.exceptions;
 
 public class AvailableObjectException extends Exception{
     public AvailableObjectException(String message){

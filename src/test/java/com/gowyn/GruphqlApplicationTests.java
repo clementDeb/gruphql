@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql;
+package com.gowyn;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql.controller;
+package com.gowyn.controller;
 
 import org.springframework.web.bind.annotation.*;
 

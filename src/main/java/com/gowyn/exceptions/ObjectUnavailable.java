@@ -1,4 +1,4 @@
-package com.graphqllike.gruphql.exceptions;
+package com.gowyn.exceptions;
 
 public class ObjectUnavailable extends Exception{
 
