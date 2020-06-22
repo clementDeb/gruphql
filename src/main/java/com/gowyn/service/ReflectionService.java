@@ -12,10 +12,7 @@ public class ReflectionService {
 
     private final Reflections reflect;
 
-    @Value("${annotated.object.package.name}")
-    private String packageName;
-
-    public ReflectionService (){
+    public ReflectionService (@Value("${avalaible.object.package}") String packageName){
         reflect = new Reflections(packageName);
     }
 
