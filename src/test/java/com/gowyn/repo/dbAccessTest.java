@@ -18,10 +18,10 @@ import static org.hamcrest.core.Is.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class UserDaoTest {
+public class dbAccessTest {
 
     @Autowired
-    private UserDao repo;
+    private RequestRepo repo;
 
     @Sql("/test-insert-user.sql")
     @Test

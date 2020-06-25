@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @__({@Autowired}))
-public class UserDao {
+public class RequestRepo {
 
     private final EntityManager em;
 
