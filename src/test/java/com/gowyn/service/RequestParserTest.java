@@ -3,6 +3,7 @@ package com.gowyn.service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
@@ -16,8 +17,7 @@ import static org.hamcrest.Matchers.is;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RequestParserTest {
 
-    @InjectMocks
-    RequestParser parser;
+    RequestParser parser = new RequestParser();
 
     @Test
     public void buildReuestedObjectUsingOneObject() {

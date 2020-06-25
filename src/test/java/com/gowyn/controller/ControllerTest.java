@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(Controller.class)
 public class ControllerTest {
 
-    public static final String URI = "/v1/gruphQl/";
+    public static final String URI = "/v1/gowyn/";
 
     @Autowired
     MockMvc mvc;
