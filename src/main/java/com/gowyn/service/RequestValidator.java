@@ -16,7 +16,7 @@ public class RequestValidator {
 
     private final ReflectionService reflectionService;
 
-    public RequestValidator(final ReflectionService reflectionService) {
+    protected RequestValidator(final ReflectionService reflectionService) {
         this.reflectionService = reflectionService;
     }
 
@@ -29,7 +29,7 @@ public class RequestValidator {
      * @throws AvailableObjectException
      * @throws ObjectUnavailable
      */
-    public void validateRequestedObject(String objectName, List<String> fields) throws NoSuchFieldException, AvailableObjectException, ObjectUnavailable {
+    protected void validateRequestedObject(String objectName, List<String> fields) throws NoSuchFieldException, AvailableObjectException, ObjectUnavailable {
         //using reflection check if the Object requested exist and if the properties asked are in this object
         Set<Class<?>> clazz = getAvailablesObject();
         for (Class<?> c : clazz) {

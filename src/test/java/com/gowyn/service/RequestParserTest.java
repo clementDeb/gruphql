@@ -43,15 +43,11 @@ public class RequestParserTest {
     public void parseRequestedObject() {
         String request = "user:name/lastname";
 
-        Map<String, String[]> requestedObject = parser.parseRequestedObject(request);
+        Object[] requestedObject = parser.parseRequestedObject(request);
 
-        assertThat(requestedObject.size(), is(1));
-        requestedObject.forEach((objectName, fields) -> {
-            assertThat(objectName, is("user"));
-            assertThat(fields.length, is(2));
-            assertThat(Arrays.asList(fields), contains("name", "lastname"));
-        });
-
+        assertThat(requestedObject.length, is(2));
+        assertThat(requestedObject[0], is("user"));
+        assertThat(requestedObject[1], is("lastname"));
     }
 
 }

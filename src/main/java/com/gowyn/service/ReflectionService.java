@@ -12,11 +12,11 @@ public class ReflectionService {
 
     private final Reflections reflect;
 
-    public ReflectionService (@Value("${avalaible.object.package}") String packageName){
+    protected ReflectionService (@Value("${avalaible.object.package}") String packageName){
         reflect = new Reflections(packageName);
     }
 
-    public Set<Class<?>> getAvailablesObjects(){
+    protected Set<Class<?>> getAvailablesObjects(){
         return reflect.getTypesAnnotatedWith(AvailableObject.class);
     }
 

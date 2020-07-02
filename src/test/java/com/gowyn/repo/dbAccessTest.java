@@ -1,5 +1,6 @@
 package com.gowyn.repo;
 
+import com.gowyn.data.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,31 +26,45 @@ public class dbAccessTest {
 
     @Sql("/test-insert-user.sql")
     @Test
-    public void getDatasById (){
+    public void getDatasById() {
 
-        List<Tuple> values = repo.getDataById(1L, Collections.emptyList(), "User");
+        List<List<Object>> dbValues = repo.getDataById(1L, Collections.emptyList(), "User");
 
-        assertThat(values.size(), is(1));
-
-    }
-
-    @Sql("/test-insert-user.sql")
-    @Test
-    public void getDatasByIdUsingOneParam (){
-
-        List<Tuple> values = repo.getDataById(1L, Collections.singletonList("name"), "User");
-
-        assertThat(values.size(), is(1));
+        assertThat(dbValues.size(), is(1));
+        List<Object> fields = dbValues.get(0);
+        assertThat(fields.size(), is(1));
+        assertThat(fields.get(0).getClass(), is(User.class));
+        User user = (User) fields.get(0);
+        assertThat(user.getId(), is(1L));
+        assertThat(user.getName(), is("nameTest"));
+        assertThat(user.getLastname(), is("lastnameTest"));
 
     }
 
     @Sql("/test-insert-user.sql")
     @Test
-    public void getDatasByIdUsingTwoParam (){
+    public void getDatasByIdUsingOneParam() {
 
-        List<Tuple> values = repo.getDataById(1L, Arrays.asList("name", "lastname"), "User");
+        List<List<Object>> dbValues = repo.getDataById(1L, Collections.singletonList("name"), "User");
 
-        assertThat(values.size(), is(1));
+        assertThat(dbValues.size(), is(1));
+        List<Object> fields = dbValues.get(0);
+        assertThat(fields.size(), is(1));
+        assertThat(fields.get(0), is("nameTest"));
+
+    }
+
+    @Sql("/test-insert-user.sql")
+    @Test
+    public void getDatasByIdUsingTwoParam() {
+
+        List<List<Object>> dbValues = repo.getDataById(1L, Arrays.asList("name", "lastname"), "User");
+
+        assertThat(dbValues.size(), is(1));
+        List<Object> fields = dbValues.get(0);
+        assertThat(fields.size(), is(2));
+        assertThat(fields.get(0), is("nameTest"));
+        assertThat(fields.get(1), is("lastnameTest"));
 
     }
 
