@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.persistence.Tuple;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,13 +27,13 @@ public class dbAccessTest {
     @Test
     public void getDatasById() {
 
-        List<List<Object>> dbValues = repo.getDataById(1L, Collections.emptyList(), "User");
+        Object dbValues = repo.getDataById(1L, Collections.emptyList(), "User");
 
-        assertThat(dbValues.size(), is(1));
-        List<Object> fields = dbValues.get(0);
-        assertThat(fields.size(), is(1));
-        assertThat(fields.get(0).getClass(), is(User.class));
-        User user = (User) fields.get(0);
+        List<Object> results = (List<Object>) dbValues;
+
+        assertThat(results.size(), is(1));
+        assertThat(results.get(0).getClass(), is(User.class));
+        User user = (User) results.get(0);
         assertThat(user.getId(), is(1L));
         assertThat(user.getName(), is("nameTest"));
         assertThat(user.getLastname(), is("lastnameTest"));
@@ -45,12 +44,11 @@ public class dbAccessTest {
     @Test
     public void getDatasByIdUsingOneParam() {
 
-        List<List<Object>> dbValues = repo.getDataById(1L, Collections.singletonList("name"), "User");
+        Object dbValues = repo.getDataById(1L, Collections.singletonList("name"), "User");
 
-        assertThat(dbValues.size(), is(1));
-        List<Object> fields = dbValues.get(0);
-        assertThat(fields.size(), is(1));
-        assertThat(fields.get(0), is("nameTest"));
+        List<Object> result = (List<Object>) dbValues;
+        assertThat(result.size(), is(1));
+        assertThat(result.get(0), is("nameTest"));
 
     }
 
@@ -58,13 +56,12 @@ public class dbAccessTest {
     @Test
     public void getDatasByIdUsingTwoParam() {
 
-        List<List<Object>> dbValues = repo.getDataById(1L, Arrays.asList("name", "lastname"), "User");
+        Object dbValues = repo.getDataById(1L, Arrays.asList("name", "lastname"), "User");
 
-        assertThat(dbValues.size(), is(1));
-        List<Object> fields = dbValues.get(0);
-        assertThat(fields.size(), is(2));
-        assertThat(fields.get(0), is("nameTest"));
-        assertThat(fields.get(1), is("lastnameTest"));
+        List<Object> result = (List<Object>) dbValues;
+        assertThat(result.size(), is(2));
+        assertThat(result.get(0), is("nameTest"));
+        assertThat(result.get(1), is("lastnameTest"));
 
     }
 

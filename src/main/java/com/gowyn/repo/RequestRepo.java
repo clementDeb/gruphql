@@ -20,30 +20,15 @@ public class RequestRepo {
 
     @SuppressWarnings("unchecked")
     @Transactional
-    public List<List<Object>> getDataById(Long id, List<String> params, String object) {
+    public Object getDataById(Long id, List<String> params, String object) {
 
         String query = buildQuery(params, object);
 
         return em.createQuery(query)
                 .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new ResultTransformer() {
-                                          @Override
-                                          public Object transformTuple(Object[] objects, String[] strings) {
-                                              List<Object> responseFields = new ArrayList<>();
-                                              List<Object> fields = Arrays.asList(objects);
-                                              fields.forEach(object -> responseFields.add(objects[fields.indexOf(object)]));
-
-                                              return responseFields;
-                                          }
-
-                                          @Override
-                                          public List transformList(List list) {
-                                              return list;
-                                          }
-                                      }
-                )
+                .setResultTransformer(new Transformer())
                 .setParameter("id", id)
-                .getResultList();
+                .uniqueResult();
 
     }
 
@@ -69,6 +54,22 @@ public class RequestRepo {
             sb.append("o.");
             sb.append(param);
             p += 1;
+        }
+    }
+
+    private class Transformer implements ResultTransformer {
+        @Override
+        public Object transformTuple(Object[] objects, String[] strings) {
+            List<Object> responseFields = new ArrayList<>();
+            List<Object> fields = Arrays.asList(objects);
+            fields.forEach(object -> responseFields.add(objects[fields.indexOf(object)]));
+
+            return responseFields;
+        }
+
+        @Override
+        public List transformList(List list) {
+            return list;
         }
     }
 }
