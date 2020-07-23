@@ -1,6 +1,8 @@
 package com.gowyn.repo;
 
 import com.gowyn.data.User;
+import com.gowyn.exceptions.NoPrimaryKeyFoundException;
+import com.gowyn.service.RequestRepo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,9 @@ public class dbAccessTest {
 
     @Sql("/test-insert-user.sql")
     @Test
-    public void getDatasById() {
+    public void getDatasById() throws NoPrimaryKeyFoundException {
 
-        Object dbValues = repo.getDataById(1L, Collections.emptyList(), "User");
+        Object dbValues = repo.getDataByPrimaryKey(1L, Collections.emptyList(), "User");
 
         List<Object> results = (List<Object>) dbValues;
 
@@ -42,9 +44,9 @@ public class dbAccessTest {
 
     @Sql("/test-insert-user.sql")
     @Test
-    public void getDatasByIdUsingOneParam() {
+    public void getDatasByIdUsingOneParam() throws NoPrimaryKeyFoundException {
 
-        Object dbValues = repo.getDataById(1L, Collections.singletonList("name"), "User");
+        Object dbValues = repo.getDataByPrimaryKey(1L, Collections.singletonList("name"), "User");
 
         List<Object> result = (List<Object>) dbValues;
         assertThat(result.size(), is(1));
@@ -54,9 +56,9 @@ public class dbAccessTest {
 
     @Sql("/test-insert-user.sql")
     @Test
-    public void getDatasByIdUsingTwoParam() {
+    public void getDatasByIdUsingTwoParam() throws NoPrimaryKeyFoundException {
 
-        Object dbValues = repo.getDataById(1L, Arrays.asList("name", "lastname"), "User");
+        Object dbValues = repo.getDataByPrimaryKey(1L, Arrays.asList("name", "lastname"), "User");
 
         List<Object> result = (List<Object>) dbValues;
         assertThat(result.size(), is(2));

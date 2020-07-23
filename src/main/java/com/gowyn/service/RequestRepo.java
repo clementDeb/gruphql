@@ -1,8 +1,11 @@
-package com.gowyn.repo;
+package com.gowyn.service;
 
+import com.gowyn.exceptions.NoPrimaryKeyFoundException;
+import com.gowyn.service.ReflectionService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -18,9 +21,11 @@ public class RequestRepo {
 
     private final EntityManager em;
 
+    private final ReflectionService reflectionService;
+
     @SuppressWarnings("unchecked")
     @Transactional
-    public Object getDataById(Long id, List<String> params, String object) {
+    public Object getDataByPrimaryKey(Long id, List<String> params, String object) throws NoPrimaryKeyFoundException {
 
         String query = buildQuery(params, object);
 
@@ -32,14 +37,16 @@ public class RequestRepo {
 
     }
 
-    private String buildQuery(List<String> params, String objectName) {
+    private String buildQuery(List<String> params, String objectName) throws NoPrimaryKeyFoundException {
         StringBuilder sb = new StringBuilder();
         sb.append("Select ");
         if (params.isEmpty()) {
             sb.append("o");
         }
+
+        String primaryKeyField = reflectionService.retrievePrimaryKey(objectName).getName();
         addParamToQuery(params, sb);
-        sb.append(" from ").append(objectName).append(" o where o.id = :id");
+        sb.append(" from ").append(objectName).append(" o where o.").append(primaryKeyField).append("= :id");
 
         return sb.toString();
 
