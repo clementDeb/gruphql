@@ -6,13 +6,11 @@ import com.gowyn.exceptions.NoPrimaryKeyFoundException;
 import com.gowyn.service.RequestRepo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +28,7 @@ public class RequestRepoTest {
     private RequestRepo repo;
 
     @Sql("/test-insert-user.sql")
-    @SuppressWarnings("DefaultAnnotationParam")
+    @SuppressWarnings("DefaultAnnotationParam, unchecked")
     @Test(expected = Test.None.class)
     public void getDatasById() throws NoPrimaryKeyFoundException, NoEntityObjectFound {
 
@@ -48,7 +46,7 @@ public class RequestRepoTest {
     }
 
     @Sql("/test-insert-user.sql")
-    @SuppressWarnings("DefaultAnnotationParam")
+    @SuppressWarnings("DefaultAnnotationParam, unchecked")
     @Test(expected = Test.None.class)
     public void getDatasByIdUsingOneParam() throws NoPrimaryKeyFoundException, NoEntityObjectFound {
 
@@ -61,7 +59,7 @@ public class RequestRepoTest {
     }
 
     @Sql("/test-insert-user.sql")
-    @SuppressWarnings("DefaultAnnotationParam")
+    @SuppressWarnings("DefaultAnnotationParam, unchecked")
     @Test(expected = Test.None.class)
     public void getDatasByIdUsingTwoParam() throws NoPrimaryKeyFoundException, NoEntityObjectFound {
 

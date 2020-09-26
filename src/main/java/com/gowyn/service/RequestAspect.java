@@ -5,6 +5,9 @@ import com.gowyn.exceptions.NoPrimaryKeyFoundException;
 import com.gowyn.exceptions.ObjectUnavailable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.javatuples.Pair;
@@ -27,19 +30,20 @@ public class RequestAspect {
     private final RequestRepo repo;
 
 
-    @Before(value = "@annotation(GowynRequest) && args(id, request)", argNames = "id,request")
-    public String processRequest(long id, String request) {
+    @Around(value = "@annotation(GowynRequest) && args(id, request)", argNames = "pjp,id,request")
+    public String processRequest(ProceedingJoinPoint pjp, long id, String request) throws Throwable {
 
+        String requestResult = (String) pjp.proceed();
         //parse the request and get the list of needed object
         parser.buildRequestedObject(request).forEach(req -> {
             Pair<String, List<String>> requestObject = retrieveObjectAndFields(req);
             String objectName = requestObject.getValue0();
             List<String> fields = requestObject.getValue1();
-            //validate the request
             validateRequest(objectName, fields);
-            //retrieve data from Db
             try {
                 Object dbInfo = repo.getDataByPrimaryKey(id, fields, objectName);
+                // si les champs ont vide on recupere l'objet
+                // sinon, on recupere la valeur des champs sous forme de liste
             } catch (NoPrimaryKeyFoundException | NoEntityObjectFound e) {
                 log.error("error while requesting the query ", e);
                 throw new RuntimeException(e);
@@ -48,9 +52,10 @@ public class RequestAspect {
 
 
         });
-        return "";
+        return requestResult;
     }
 
+    @SuppressWarnings("unchecked")
     private Pair<String, List<String>> retrieveObjectAndFields (String request){
         Object[] requestedObject = parser.parseRequestedObject(request);
         String objectName = (String) requestedObject[0];
