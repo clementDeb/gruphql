@@ -1,7 +1,7 @@
 package com.gowyn.service;
 
 import com.gowyn.data.User;
-import com.gowyn.exceptions.AvailableObjectException;
+import com.gowyn.exceptions.NoEntityObjectFound;
 import com.gowyn.exceptions.ObjectUnavailable;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -96,7 +96,7 @@ public class RequestValidatorTest {
 
         given(reflectionService.getAvailablesObjects()).willReturn(Collections.EMPTY_SET);
 
-        AvailableObjectException exception = assertThrows(AvailableObjectException.class, () -> requestValidator.validateRequestedObject("", Collections.emptyList()));
+        NoEntityObjectFound exception = assertThrows(NoEntityObjectFound.class, () -> requestValidator.validateRequestedObject("", Collections.emptyList()));
 
         MatcherAssert.assertThat(exception.getMessage(), is("No object are annotated"));
     }

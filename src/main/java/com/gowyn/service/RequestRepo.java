@@ -1,39 +1,38 @@
 package com.gowyn.service;
 
+import com.gowyn.exceptions.NoEntityObjectFound;
 import com.gowyn.exceptions.NoPrimaryKeyFoundException;
-import com.gowyn.service.ReflectionService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @__({@Autowired}))
 public class RequestRepo {
 
-
     private final EntityManager em;
 
     private final ReflectionService reflectionService;
 
-    @SuppressWarnings("unchecked")
     @Transactional
-    public Object getDataByPrimaryKey(Long id, List<String> params, String object) throws NoPrimaryKeyFoundException {
+    public Object getDataByPrimaryKey(Long id, List<String> params, String object) throws NoPrimaryKeyFoundException, NoEntityObjectFound {
 
         String query = buildQuery(params, object);
 
-        return em.createQuery(query)
+        return Optional.ofNullable(em.createQuery(query)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new Transformer())
                 .setParameter("id", id)
-                .uniqueResult();
+                .uniqueResult()).orElseThrow(() -> new NoEntityObjectFound("the request returned no result"));
+
 
     }
 
@@ -64,18 +63,16 @@ public class RequestRepo {
         }
     }
 
-    private class Transformer implements ResultTransformer {
+    private static class Transformer implements ResultTransformer {
         @Override
         public Object transformTuple(Object[] objects, String[] strings) {
             List<Object> responseFields = new ArrayList<>();
-            List<Object> fields = Arrays.asList(objects);
-            fields.forEach(object -> responseFields.add(objects[fields.indexOf(object)]));
-
+            Collections.addAll(responseFields, objects);
             return responseFields;
         }
 
         @Override
-        public List transformList(List list) {
+        public List<?> transformList(List list) {
             return list;
         }
     }

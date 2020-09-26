@@ -1,13 +1,12 @@
 package com.gowyn.service;
 
-import com.gowyn.data.AvailableObject;
 import com.gowyn.exceptions.NoPrimaryKeyFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Entity;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Optional;
@@ -27,7 +26,7 @@ public class ReflectionService {
     }
 
     protected Set<Class<?>> getAvailablesObjects() {
-        return reflect.getTypesAnnotatedWith(AvailableObject.class);
+        return reflect.getTypesAnnotatedWith(Entity.class);
     }
 
     protected Field retrievePrimaryKey(String objectName) throws NoPrimaryKeyFoundException {

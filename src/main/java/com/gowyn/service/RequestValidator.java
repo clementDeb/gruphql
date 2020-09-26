@@ -1,7 +1,7 @@
 package com.gowyn.service;
 
 
-import com.gowyn.exceptions.AvailableObjectException;
+import com.gowyn.exceptions.NoEntityObjectFound;
 import com.gowyn.exceptions.ObjectUnavailable;
 import com.gowyn.utils.LambdaExceptionUtils;
 import org.springframework.stereotype.Service;
@@ -26,10 +26,10 @@ public class RequestValidator {
      * @param objectName
      * @param fields
      * @throws NoSuchFieldException
-     * @throws AvailableObjectException
+     * @throws NoEntityObjectFound
      * @throws ObjectUnavailable
      */
-    protected void validateRequestedObject(String objectName, List<String> fields) throws NoSuchFieldException, AvailableObjectException, ObjectUnavailable {
+    protected void validateRequestedObject(String objectName, List<String> fields) throws NoSuchFieldException, NoEntityObjectFound, ObjectUnavailable {
         //using reflection check if the Object requested exist and if the properties asked are in this object
         Set<Class<?>> clazz = getAvailablesObject();
         for (Class<?> c : clazz) {
@@ -39,18 +39,18 @@ public class RequestValidator {
         }
     }
 
-    private Set<Class<?>> getAvailablesObject() throws AvailableObjectException {
+    private Set<Class<?>> getAvailablesObject() throws NoEntityObjectFound {
 
         Set<Class<?>> validObjects = reflectionService.getAvailablesObjects();
         if (validObjects.isEmpty()) {
-            throw new AvailableObjectException("No object are annotated");
+            throw new NoEntityObjectFound("No object are annotated as an entity object");
         }
         return validObjects;
     }
 
     private void checkObjectValidity(String objectName, Class<?> clazz) throws ObjectUnavailable {
         if (!clazz.getSimpleName().equals(objectName)) {
-            throw new ObjectUnavailable("The syntax of the requested Object (" + objectName + ") does not match existing object: ");
+            throw new ObjectUnavailable("The syntax of the requested Object (" + objectName + ") does not match existing entity object: ");
         }
     }
 

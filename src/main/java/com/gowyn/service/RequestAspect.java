@@ -1,11 +1,14 @@
 package com.gowyn.service;
 
-import com.gowyn.exceptions.AvailableObjectException;
+import com.gowyn.exceptions.NoEntityObjectFound;
+import com.gowyn.exceptions.NoPrimaryKeyFoundException;
 import com.gowyn.exceptions.ObjectUnavailable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.javatuples.Pair;
+import org.javatuples.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,14 +31,19 @@ public class RequestAspect {
     public String processRequest(long id, String request) {
 
         //parse the request and get the list of needed object
-        parser.buildRequestedObject(request).forEach(r -> {
-            Object[] requestedObject = parser.parseRequestedObject(r);
-            String objectName = (String) requestedObject[0];
-            List<String> fields = (List<String>) requestedObject[1];
+        parser.buildRequestedObject(request).forEach(req -> {
+            Pair<String, List<String>> requestObject = retrieveObjectAndFields(req);
+            String objectName = requestObject.getValue0();
+            List<String> fields = requestObject.getValue1();
             //validate the request
             validateRequest(objectName, fields);
             //retrieve data from Db
-            //List<Unit> dbInfo = repo.getDataById(id, fields, objectName);
+            try {
+                Object dbInfo = repo.getDataByPrimaryKey(id, fields, objectName);
+            } catch (NoPrimaryKeyFoundException | NoEntityObjectFound e) {
+                log.error("error while requesting the query ", e);
+                throw new RuntimeException(e);
+            }
             //build & return the response
 
 
@@ -43,11 +51,19 @@ public class RequestAspect {
         return "";
     }
 
+    private Pair<String, List<String>> retrieveObjectAndFields (String request){
+        Object[] requestedObject = parser.parseRequestedObject(request);
+        String objectName = (String) requestedObject[0];
+        List<String> fields = (List<String>) requestedObject[1];
+        return new Pair<>(objectName, fields);
+    }
+
     private void validateRequest(String objectName, List<String> fields) {
         try {
             validator.validateRequestedObject(objectName, fields);
-        } catch (NoSuchFieldException | AvailableObjectException | ObjectUnavailable e) {
+        } catch (NoSuchFieldException | NoEntityObjectFound | ObjectUnavailable e) {
             log.error("error while parsing the requested Object or parameter ", e);
+            throw new RuntimeException(e);
         }
     }
 }
