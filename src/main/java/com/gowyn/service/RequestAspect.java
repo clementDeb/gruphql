@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Aspect
 @Component
@@ -30,15 +31,17 @@ public class RequestAspect {
     @Around(value = "@annotation(GowynRequest) && args(id, request)", argNames = "pjp,id,request")
     public String processRequest(ProceedingJoinPoint pjp, long id, String request) throws Throwable {
 
-        String requestResult = (String) pjp.proceed();
+        AtomicReference<String> requestResult = new AtomicReference<>((String) pjp.proceed());
+        StringBuilder sb = new StringBuilder();
         //parse the request and get the list of needed object
         parser.buildRequestedObject(request).forEach(req -> {
             Pair<String, List<String>> requestObject = retrieveObjectAndFields(req);
             String objectName = requestObject.getValue0();
             List<String> fields = requestObject.getValue1();
             validateRequest(objectName, fields);
+            Object dbresults;
             try {
-                Object dbInfo = repo.getDataByPrimaryKey(id, fields, objectName);
+                dbresults = repo.getDataByPrimaryKey(id, fields, objectName);
                 // si les champs sont vide on recupere l'objet
                 // sinon, on recupere la valeur des champs sous forme de liste
             } catch (NoPrimaryKeyFoundException | NoEntityObjectFound e) {
@@ -46,14 +49,18 @@ public class RequestAspect {
                 throw new RuntimeException(e);
             }
             //build & return the response
-            StringBuilder sb = new StringBuilder();
+
+            if (fields.isEmpty()) {
+                sb.append(objectName).append(":");
+            }
+            requestResult.set(sb.toString());
 
         });
-        return requestResult;
+        return requestResult.get();
     }
 
     @SuppressWarnings("unchecked")
-    private Pair<String, List<String>> retrieveObjectAndFields (String request){
+    private Pair<String, List<String>> retrieveObjectAndFields(String request) {
         Object[] requestedObject = parser.parseRequestedObject(request);
         String objectName = (String) requestedObject[0];
         List<String> fields = (List<String>) requestedObject[1];

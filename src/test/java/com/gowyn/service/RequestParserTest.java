@@ -2,16 +2,11 @@ package com.gowyn.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,7 +25,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void buildReuestedObjectUsingTwoObject() {
+    public void buildRequestedObjectsUsingTwoObject() {
         String request = "user:name/lastname\nadress:postalCode/city";
 
         List<String> requestedObject = parser.buildRequestedObject(request);

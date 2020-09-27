@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -34,14 +35,13 @@ public class ControllerIT {
     }
 
     @Test
-    public void getById() {
+    @Sql("/test-insert-user.sql")
+    public void getByIdValidRequest() {
 
         Map<String, Long> params = new HashMap<>();
         params.put("id", 1L);
         String url = UriComponentsBuilder.fromUriString(URI).buildAndExpand(params).toUriString();
-
-        HttpEntity<String> request =
-                new HttpEntity<>("test");
+        HttpEntity<String> request = new HttpEntity<>("User:name/lastname");
 
         ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
