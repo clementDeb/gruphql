@@ -9,9 +9,9 @@ public class Controller {
 
     //use AOP to validate the request before going into the getMethod
 
-    @GetMapping("/{id}")
+    @PostMapping("/{id}")
     @GowynRequest
-    public String getById(@PathVariable long id, @RequestBody String request) {
+    public String getById(@PathVariable long id, @RequestBody(required = false) String request) {
         return "gowyn request " + request;
     }
 

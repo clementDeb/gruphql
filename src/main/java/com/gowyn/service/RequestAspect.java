@@ -6,12 +6,9 @@ import com.gowyn.exceptions.ObjectUnavailable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.javatuples.Pair;
-import org.javatuples.Unit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,14 +39,14 @@ public class RequestAspect {
             validateRequest(objectName, fields);
             try {
                 Object dbInfo = repo.getDataByPrimaryKey(id, fields, objectName);
-                // si les champs ont vide on recupere l'objet
+                // si les champs sont vide on recupere l'objet
                 // sinon, on recupere la valeur des champs sous forme de liste
             } catch (NoPrimaryKeyFoundException | NoEntityObjectFound e) {
                 log.error("error while requesting the query ", e);
                 throw new RuntimeException(e);
             }
             //build & return the response
-
+            StringBuilder sb = new StringBuilder();
 
         });
         return requestResult;
