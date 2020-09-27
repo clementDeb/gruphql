@@ -9,10 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @__({@Autowired}))
@@ -66,9 +63,7 @@ public class RequestRepo {
     private static class Transformer implements ResultTransformer {
         @Override
         public Object transformTuple(Object[] objects, String[] strings) {
-            List<Object> responseFields = new ArrayList<>();
-            Collections.addAll(responseFields, objects);
-            return responseFields;
+            return Arrays.asList(objects);
         }
 
         @Override
