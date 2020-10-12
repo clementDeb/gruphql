@@ -3,6 +3,7 @@ package com.gowyn.service;
 
 import com.gowyn.exceptions.NoEntityObjectFound;
 import com.gowyn.exceptions.ObjectUnavailable;
+import com.gowyn.invariant.DataInput;
 import com.gowyn.utils.LambdaExceptionUtils;
 import org.springframework.stereotype.Service;
 
@@ -23,19 +24,18 @@ public class RequestValidator {
     /**
      * Method used to validate the request (Object and properties)
      *
-     * @param objectName
-     * @param fields
+     * @param data to be requested
      * @throws NoSuchFieldException
      * @throws NoEntityObjectFound
      * @throws ObjectUnavailable
      */
-    protected void validateRequestedObject(String objectName, List<String> fields) throws NoSuchFieldException, NoEntityObjectFound, ObjectUnavailable {
+    protected void validateRequestedObject(final DataInput data) throws NoSuchFieldException, NoEntityObjectFound, ObjectUnavailable {
         //using reflection check if the Object requested exist and if the properties asked are in this object
         Set<Class<?>> clazz = getAvailablesObject();
         for (Class<?> c : clazz) {
-            checkObjectValidity(objectName, c);
+            checkObjectValidity(data.getObjectName(), c);
             // check if the defined fields are in the previously checked object
-            fieldsExist(c, fields);
+            fieldsExist(c, data.getFields());
         }
     }
 

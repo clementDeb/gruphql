@@ -1,5 +1,7 @@
 package com.gowyn.controller;
 
+import com.gowyn.invariant.DataInput;
+import com.gowyn.invariant.DatasInput;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,11 +15,13 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,13 +45,22 @@ public class ControllerIT {
         Map<String, Long> params = new HashMap<>();
         params.put("id", 1L);
         String url = UriComponentsBuilder.fromUriString(URI).buildAndExpand(params).toUriString();
-        HttpEntity<String> request = new HttpEntity<>("User:name/lastname");
+        HttpEntity<DatasInput> request = new HttpEntity<>(buildDatas());
 
-        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+        ResponseEntity<DatasInput> response = restTemplate.postForEntity(url, request, DatasInput.class);
 
-        assertThat(response.getBody(), containsString("te"));
+        assertThat(response.getBody(), notNullValue());
+        assertThat(response.getBody().getInputs(), hasSize(1));
         assertThat(response.getStatusCodeValue(), is(200));
 
+    }
+
+    private DatasInput buildDatas() {
+        DataInput data = DataInput.builder().objectName("User").fields(Collections.singletonList("lastname")).build();
+        DatasInput datas = new DatasInput();
+        datas.setInputs(Collections.singletonList(data));
+
+        return datas;
     }
 
 }

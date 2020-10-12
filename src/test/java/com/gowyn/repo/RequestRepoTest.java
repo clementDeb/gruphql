@@ -2,6 +2,7 @@ package com.gowyn.repo;
 
 import com.gowyn.exceptions.NoEntityObjectFound;
 import com.gowyn.exceptions.NoPrimaryKeyFoundException;
+import com.gowyn.invariant.DataInput;
 import com.gowyn.service.RequestRepo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +33,8 @@ public class RequestRepoTest {
     @SuppressWarnings("DefaultAnnotationParam, unchecked")
     @Test(expected = Test.None.class)
     public void getDatasById() throws NoPrimaryKeyFoundException, NoEntityObjectFound, IllegalAccessException {
-        List<Object> results = (List<Object>) repo.getDataByPrimaryKey(1L, Collections.emptyList(), "User");
+        DataInput data = DataInput.builder().objectName("User").fields(Collections.emptyList()).build();
+        List<Object> results = (List<Object>) repo.getDataByPrimaryKey(1L, data);
         List<Object> returnedValues = getReturnedObjectFieldValues(results);
 
         assertThat(returnedValues, containsInAnyOrder(1L, "nameTest", "lastnameTest"));
@@ -42,7 +43,7 @@ public class RequestRepoTest {
     private List<Object> getReturnedObjectFieldValues(List<Object> results) throws IllegalAccessException {
         Field[] fields = results.get(0).getClass().getDeclaredFields();
         List<Object> returnedValues = new ArrayList<>();
-        for (Field field : fields){
+        for (Field field : fields) {
             field.setAccessible(true);
             Object value = field.get(results.get(0));
             returnedValues.add(value);
@@ -54,8 +55,8 @@ public class RequestRepoTest {
     @SuppressWarnings("DefaultAnnotationParam, unchecked")
     @Test(expected = Test.None.class)
     public void getDatasByIdUsingOneParam() throws NoPrimaryKeyFoundException, NoEntityObjectFound {
-
-        Object dbValues = repo.getDataByPrimaryKey(1L, Collections.singletonList("name"), "User");
+        DataInput data = DataInput.builder().objectName("User").fields(Collections.singletonList("name")).build();
+        Object dbValues = repo.getDataByPrimaryKey(1L, data);
 
         List<Object> result = (List<Object>) dbValues;
         assertThat(result.size(), is(1));
@@ -67,8 +68,8 @@ public class RequestRepoTest {
     @SuppressWarnings("DefaultAnnotationParam, unchecked")
     @Test(expected = Test.None.class)
     public void getDatasByIdUsingTwoParam() throws NoPrimaryKeyFoundException, NoEntityObjectFound {
-
-        Object dbValues = repo.getDataByPrimaryKey(1L, Arrays.asList("name", "lastname"), "User");
+        DataInput data = DataInput.builder().objectName("User").fields(List.of("name", "lastname")).build();
+        Object dbValues = repo.getDataByPrimaryKey(1L, data);
 
         List<Object> result = (List<Object>) dbValues;
         assertThat(result.size(), is(2));
@@ -79,9 +80,10 @@ public class RequestRepoTest {
 
     @Sql("/test-insert-user.sql")
     @Test
-    public void mustThrowExceptionIfNoResult (){
+    public void mustThrowExceptionIfNoResult() {
 
-        NoEntityObjectFound exception = assertThrows (NoEntityObjectFound.class , ()-> repo.getDataByPrimaryKey(2L, Arrays.asList("name", "lastname"), "User"));
+        DataInput data = DataInput.builder().objectName("User").fields(List.of("name", "lastname")).build();
+        NoEntityObjectFound exception = assertThrows(NoEntityObjectFound.class, () -> repo.getDataByPrimaryKey(2L, data));
 
         assertThat(exception.getMessage(), is("the request returned no result"));
 

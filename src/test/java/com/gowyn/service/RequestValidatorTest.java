@@ -3,6 +3,7 @@ package com.gowyn.service;
 import com.gowyn.data.User;
 import com.gowyn.exceptions.NoEntityObjectFound;
 import com.gowyn.exceptions.ObjectUnavailable;
+import com.gowyn.invariant.DataInput;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,11 +13,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.BDDMockito.given;
 
@@ -39,10 +38,9 @@ public class RequestValidatorTest {
         classSet.add(User.class);
 
         given(reflectionService.getAvailablesObjects()).willReturn(classSet);
-        String objectName = "User";
-        List<String> fields = Collections.singletonList("lastname");
+        DataInput data = DataInput.builder().objectName("User").fields(Collections.singletonList("lastname")).build();
 
-        requestValidator.validateRequestedObject(objectName, fields);
+        requestValidator.validateRequestedObject(data);
     }
 
     @SuppressWarnings("DefaultAnnotationParam")
@@ -53,10 +51,9 @@ public class RequestValidatorTest {
         classSet.add(User.class);
 
         given(reflectionService.getAvailablesObjects()).willReturn(classSet);
-        String objectName = "User";
-        List<String> fields = Collections.singletonList("LastName");
+        DataInput data = DataInput.builder().objectName("User").fields(Collections.singletonList("LastName")).build();
 
-        requestValidator.validateRequestedObject(objectName, fields);
+        requestValidator.validateRequestedObject(data);
     }
 
     @SuppressWarnings("DefaultAnnotationParam")
@@ -67,11 +64,9 @@ public class RequestValidatorTest {
         classSet.add(User.class);
 
         given(reflectionService.getAvailablesObjects()).willReturn(classSet);
+        DataInput data = DataInput.builder().objectName("User").fields(Collections.singletonList("LastName")).build();
 
-        String objectName = "User";
-        List<String> fields = Collections.singletonList("LastName");
-
-        requestValidator.validateRequestedObject(objectName, fields);
+        requestValidator.validateRequestedObject(data);
     }
 
     @Test
@@ -81,11 +76,9 @@ public class RequestValidatorTest {
         classSet.add(User.class);
 
         given(reflectionService.getAvailablesObjects()).willReturn(classSet);
+        DataInput data = DataInput.builder().objectName("User").fields(Collections.singletonList("field")).build();
 
-        String objectName = "User";
-        List<String> fields = Collections.singletonList("field");
-
-        NoSuchFieldException exception = assertThrows(NoSuchFieldException.class, () -> requestValidator.validateRequestedObject(objectName, fields));
+        NoSuchFieldException exception = assertThrows(NoSuchFieldException.class, () -> requestValidator.validateRequestedObject(data));
 
         MatcherAssert.assertThat(exception.getMessage(), containsString("field"));
     }
@@ -96,9 +89,11 @@ public class RequestValidatorTest {
 
         given(reflectionService.getAvailablesObjects()).willReturn(Collections.EMPTY_SET);
 
-        NoEntityObjectFound exception = assertThrows(NoEntityObjectFound.class, () -> requestValidator.validateRequestedObject("", Collections.emptyList()));
+        DataInput data = DataInput.builder().objectName("").build();
 
-        MatcherAssert.assertThat(exception.getMessage(), is("No object are annotated"));
+        NoEntityObjectFound exception = assertThrows(NoEntityObjectFound.class, () -> requestValidator.validateRequestedObject(data));
+
+        MatcherAssert.assertThat(exception.getMessage(), containsString("No object are annotated"));
     }
 
     @Test
@@ -108,11 +103,9 @@ public class RequestValidatorTest {
         classSet.add(User.class);
 
         given(reflectionService.getAvailablesObjects()).willReturn(classSet);
+        DataInput data = DataInput.builder().objectName("user").fields(Collections.singletonList("lastname")).build();
 
-        String objectName = "user";
-        List<String> fields = Collections.singletonList("lastname");
-
-        ObjectUnavailable exception = assertThrows(ObjectUnavailable.class, () -> requestValidator.validateRequestedObject(objectName, fields));
+        ObjectUnavailable exception = assertThrows(ObjectUnavailable.class, () -> requestValidator.validateRequestedObject(data));
 
         MatcherAssert.assertThat(exception.getMessage(), containsString("user"));
     }

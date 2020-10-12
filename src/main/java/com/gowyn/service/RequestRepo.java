@@ -2,6 +2,7 @@ package com.gowyn.service;
 
 import com.gowyn.exceptions.NoEntityObjectFound;
 import com.gowyn.exceptions.NoPrimaryKeyFoundException;
+import com.gowyn.invariant.DataInput;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @__({@Autowired}))
@@ -20,9 +23,9 @@ public class RequestRepo {
     private final ReflectionService reflectionService;
 
     @Transactional
-    public Object getDataByPrimaryKey(Long id, List<String> params, String object) throws NoPrimaryKeyFoundException, NoEntityObjectFound {
+    public Object getDataByPrimaryKey(final Long id, final DataInput data) throws NoPrimaryKeyFoundException, NoEntityObjectFound {
 
-        String query = buildQuery(params, object);
+        String query = buildQuery(data);
 
         return Optional.ofNullable(em.createQuery(query)
                 .unwrap(org.hibernate.query.Query.class)
@@ -33,15 +36,18 @@ public class RequestRepo {
 
     }
 
-    private String buildQuery(List<String> params, String objectName) throws NoPrimaryKeyFoundException {
+    private String buildQuery(final DataInput data) throws NoPrimaryKeyFoundException {
+        List<String> fiedls = data.getFields();
+        String objectName = data.getObjectName();
+
         StringBuilder sb = new StringBuilder();
         sb.append("Select ");
-        if (params.isEmpty()) {
+        if (data.getFields().isEmpty()) {
             sb.append("o");
         }
 
         String primaryKeyField = reflectionService.retrievePrimaryKey(objectName).getName();
-        addParamToQuery(params, sb);
+        addParamToQuery(fiedls, sb);
         sb.append(" from ").append(objectName).append(" o where o.").append(primaryKeyField).append("= :id");
 
         return sb.toString();

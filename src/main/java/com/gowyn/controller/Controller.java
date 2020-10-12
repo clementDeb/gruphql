@@ -1,5 +1,7 @@
 package com.gowyn.controller;
 
+import com.gowyn.invariant.DatasInput;
+import com.gowyn.invariant.DatasOutput;
 import com.gowyn.service.GowynRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,8 +13,10 @@ public class Controller {
 
     @PostMapping("/{id}")
     @GowynRequest
-    public String getById(@PathVariable long id, @RequestBody(required = false) String request) {
-        return "gowyn request " + request;
+    public DatasOutput getById(@PathVariable(required = false) long id, @RequestBody(required = false) DatasInput datas) {
+
+        DatasOutput out = new DatasOutput();
+        return out;
     }
 
 
